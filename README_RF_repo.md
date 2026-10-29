@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <h1 style="text-align:center;"> The RFUAV DATASET </h1>
 
 <div style="text-align: center; margin: 10px 0;">
@@ -341,3 +342,7 @@ For those interested in the detection dataset, a curated [subset](https://app.ro
           primaryClass={cs.RO},
           url={https://arxiv.org/abs/2503.09033}, 
     }
+=======
+# distributed-drone-detection
+Low-cost, fault-tolerant drone detection using camera and Remote ID sensor nodes, an event bus, and sensor fusion. ENG 4000 Capstone, Team 31, York University.
+>>>>>>> a8bc24fea6100c02bb6254fd100438aea83233e1
