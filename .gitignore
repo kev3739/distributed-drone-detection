@@ -1,3 +1,26 @@
+# OS / editors
+.DS_Store
 .idea/
 .vscode/
-.gitignore
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node / React
+node_modules/
+dist/
+build/
+
+# ML artifacts (model weights go in GitHub Releases)
+*.pt
+*.pth
+*.onnx
+runs/
+data/
