@@ -1,0 +1,9 @@
+{
+  "schema": "ddds.event.v1",
+  "node_id": "cv-01",
+  "type": "camera",
+  "ts_utc": "2026-11-13T14:58:40Z",
+  "class": "drone",
+  "confidence": 0.88,
+  "bearing_deg": 120
+}

@@ -14,7 +14,7 @@ def cam(ts, bearing=90, conf=0.8):
 
 def rid(ts, conf=0.95):
     return {"node_id": "rf-01", "type": "remote_id", "ts_utc": ts,
-            "class": "DJI Mini 3", "confidence": conf,
+            "class": "DJI", "confidence": conf,
             "lat": 43.77, "lon": -79.50, "alt": 60, "rid_serial": "ABC123"}
 
 
@@ -31,7 +31,7 @@ def test_events_far_apart_stay_separate():
 
 def test_fused_alert_uses_rf_model_and_location_and_camera_bearing():
     alert = fuse([cam("2026-11-13T15:00:00Z", bearing=120), rid("2026-11-13T15:00:01Z")])[0]
-    assert alert["drone_class"] == "DJI Mini 3"
+    assert alert["drone_class"] == "DJI"
     assert alert["location"]["lat"] == 43.77
     assert alert["bearing_deg"] == 120
 
@@ -51,3 +51,12 @@ def test_order_of_events_does_not_matter():
     a = fuse([cam("2026-11-13T15:00:00Z"), rid("2026-11-13T15:00:01Z")])
     b = fuse([rid("2026-11-13T15:00:01Z"), cam("2026-11-13T15:00:00Z")])
     assert len(a) == len(b) == 1
+
+
+def test_new_sensor_type_works_without_code_changes():
+    """US-06: a mock third sensor (acoustic) is fused with no changes to fusion.py."""
+    acoustic = {"node_id": "ac-01", "type": "acoustic", "ts_utc": "2026-11-13T15:00:00Z",
+                "class": "drone", "confidence": 0.6}
+    alerts = fuse([acoustic, cam("2026-11-13T15:00:01Z")])
+    assert len(alerts) == 1
+    assert alerts[0]["sources"] == ["ac-01", "cv-01"]
