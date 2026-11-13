@@ -17,7 +17,7 @@ jobs:
         run: |
           pip install pytest
           found=0
-          for d in fusion backend edge-cv; do
+          for d in schemas fusion backend edge-cv; do
             if [ -f "$d/requirements.txt" ]; then pip install -r "$d/requirements.txt"; fi
             if ls $d/tests/*.py >/dev/null 2>&1; then found=1; pytest "$d/tests"; fi
           done

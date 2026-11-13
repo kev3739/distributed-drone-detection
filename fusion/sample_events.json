@@ -1,14 +1,18 @@
 [
   {
+    "schema": "ddds.event.v1",
     "node_id": "rf-01",
     "type": "remote_id",
     "ts_utc": "2026-11-13T14:47:30Z",
-    "class": "DJI Air 3",
+    "class": "DJI",
     "confidence": 0.99,
-    "lat": 43.7742, "lon": -79.5031, "alt": 85,
+    "lat": 43.7742,
+    "lon": -79.5031,
+    "alt": 85,
     "rid_serial": "1581F6GKB21AC0042D7E"
   },
   {
+    "schema": "ddds.event.v1",
     "node_id": "cv-01",
     "type": "camera",
     "ts_utc": "2026-11-13T14:52:05Z",
@@ -17,6 +21,7 @@
     "bearing_deg": 135
   },
   {
+    "schema": "ddds.event.v1",
     "node_id": "cv-01",
     "type": "camera",
     "ts_utc": "2026-11-13T14:58:40Z",
@@ -25,12 +30,15 @@
     "bearing_deg": 120
   },
   {
+    "schema": "ddds.event.v1",
     "node_id": "rf-01",
     "type": "remote_id",
     "ts_utc": "2026-11-13T14:58:41Z",
-    "class": "DJI Mini 3",
+    "class": "DJI",
     "confidence": 0.93,
-    "lat": 43.7735, "lon": -79.5019, "alt": 60,
+    "lat": 43.7735,
+    "lon": -79.5019,
+    "alt": 60,
     "rid_serial": "1581F5FJD239C00A1B2C"
   }
 ]

@@ -39,8 +39,8 @@ def make_alert(alert_id, group):
         "alert_id": alert_id,
         "time": group[0]["ts_utc"],
         "sources": sorted({e["node_id"] for e in group}),
-        # Remote ID knows the exact model, so prefer it over the camera's guess
-        "drone_class": rf["class"] if rf else cv["class"],
+        # Remote ID knows the manufacturer, so prefer it; otherwise use the first event's class
+        "drone_class": rf["class"] if rf else group[0]["class"],
         "confidence": max(e["confidence"] for e in group),
         # GPS position only comes from Remote ID; direction only from the camera
         "location": {"lat": rf["lat"], "lon": rf["lon"], "alt_m": rf["alt"]} if rf else None,
