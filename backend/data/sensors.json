@@ -1,0 +1,23 @@
+[
+  {
+    "node_id": "cv-01",
+    "type": "camera",
+    "status": "online",
+    "last_heartbeat": "2026-11-13T14:59:58Z",
+    "fps": 2.1
+  },
+  {
+    "node_id": "rf-01",
+    "type": "remote_id",
+    "status": "online",
+    "last_heartbeat": "2026-11-13T14:59:57Z",
+    "fps": null
+  },
+  {
+    "node_id": "cv-02",
+    "type": "camera",
+    "status": "offline",
+    "last_heartbeat": "2026-11-13T14:41:12Z",
+    "fps": null
+  }
+]
