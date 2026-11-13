@@ -1,0 +1,32 @@
+[
+  {
+    "alert_id": 1,
+    "time": "2026-11-13T14:58:40Z",
+    "sources": ["cv-01", "rf-01"],
+    "drone_class": "DJI Mini 3",
+    "confidence": 0.93,
+    "location": {"lat": 43.7735, "lon": -79.5019, "alt_m": 60},
+    "bearing_deg": null,
+    "rid_serial": "1581F5FJD239C00A1B2C"
+  },
+  {
+    "alert_id": 2,
+    "time": "2026-11-13T14:52:05Z",
+    "sources": ["cv-01"],
+    "drone_class": "drone",
+    "confidence": 0.71,
+    "location": null,
+    "bearing_deg": 135,
+    "rid_serial": null
+  },
+  {
+    "alert_id": 3,
+    "time": "2026-11-13T14:47:30Z",
+    "sources": ["rf-01"],
+    "drone_class": "DJI Air 3",
+    "confidence": 0.99,
+    "location": {"lat": 43.7742, "lon": -79.5031, "alt_m": 85},
+    "bearing_deg": null,
+    "rid_serial": "1581F6GKB21AC0042D7E"
+  }
+]
