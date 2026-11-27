@@ -8,20 +8,30 @@ on:
 jobs:
   python-tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: ddds
+          POSTGRES_PASSWORD: ddds-dev
+          POSTGRES_DB: ddds_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ddds" --health-interval 2s --health-retries 30
+    env:
+      TEST_DATABASE_URL: postgresql://ddds:ddds-dev@localhost:5432/ddds_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Run pytest for team components
+          python-version: "3.12"
+      - name: Run pytest for each component
         run: |
-          pip install pytest
-          found=0
-          for d in schemas fusion backend edge-cv; do
-            if [ -f "$d/requirements.txt" ]; then pip install -r "$d/requirements.txt"; fi
-            if ls $d/tests/*.py >/dev/null 2>&1; then found=1; pytest "$d/tests"; fi
+          for d in schemas fusion backend; do
+            echo "=== $d ==="
+            pip install -r "$d/requirements.txt"
+            (cd "$d" && pytest -v)
           done
-          if [ $found -eq 0 ]; then echo "No tests yet, skipping."; fi
 
   frontend-tests:
     runs-on: ubuntu-latest
@@ -33,7 +43,7 @@ jobs:
       - name: Run frontend tests
         run: |
           if [ -f frontend/package.json ]; then
-            cd frontend && npm ci && npm test -- --watchAll=false
+            cd frontend && npm ci && npm test
           else
             echo "No frontend yet, skipping."
           fi

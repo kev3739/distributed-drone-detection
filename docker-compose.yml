@@ -1,0 +1,81 @@
+# Starts the whole central system with one command (NFR-08):
+#   docker compose up --build
+# Add the fake sensors for testing/demos:
+#   docker compose --profile test up --build
+# Run all tests:
+#   docker compose --profile tests run --rm tests
+
+x-db-url: &db_url postgresql://ddds:${POSTGRES_PASSWORD:-ddds-dev}@postgres:5432/ddds
+x-nats-url: &nats_url nats://ddds:${NATS_PASSWORD:-ddds-dev}@nats:4222
+
+services:
+  postgres:            # the database
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ddds
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ddds-dev}
+      POSTGRES_DB: ddds
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d:ro   # 00-test-db.sql, then init.sql
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ddds -d ddds"]
+      interval: 2s
+      retries: 30
+
+  nats:                # the event bus (JetStream keeps events for 24 h), login required (NFR-05)
+    image: nats:2.10-alpine
+    command: ["-js", "-sd", "/data", "-m", "8222", "--user", "ddds", "--pass", "${NATS_PASSWORD:-ddds-dev}"]
+    volumes:
+      - natsdata:/data
+    ports: ["4222:4222", "8222:8222"]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8222/healthz"]
+      interval: 2s
+      retries: 30
+
+  fusion:              # reads events from NATS, fuses them, writes alerts to PostgreSQL
+    build: { context: ., dockerfile: fusion/Dockerfile }
+    environment:
+      DATABASE_URL: *db_url
+      NATS_URL: *nats_url
+    depends_on:
+      postgres: { condition: service_healthy }
+      nats: { condition: service_healthy }
+    restart: unless-stopped
+
+  backend:             # the API the dashboard calls
+    build: ./backend
+    environment:
+      DATABASE_URL: *db_url
+    ports: ["8000:8000"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: unless-stopped
+
+  test-publisher:      # TEST TOOL ONLY: fake sensors (only starts with --profile test)
+    profiles: [test]
+    build: { context: ., dockerfile: tools/Dockerfile }
+    environment:
+      NATS_URL: *nats_url
+    command: ["--kill", "cv-02", "--kill-after", "60"]
+    depends_on:
+      nats: { condition: service_healthy }
+
+  tests:               # runs every Python test against a real database:
+    profiles: [tests]  #   docker compose --profile tests run --rm tests
+    image: python:3.12-slim
+    working_dir: /repo
+    volumes: [".:/repo"]
+    environment:
+      TEST_DATABASE_URL: postgresql://ddds:${POSTGRES_PASSWORD:-ddds-dev}@postgres:5432/ddds_test
+    depends_on:
+      postgres: { condition: service_healthy }
+    command: >
+      sh -c "pip install -q -r schemas/requirements.txt -r fusion/requirements.txt -r backend/requirements.txt &&
+             cd schemas && pytest -q && cd ../fusion && pytest -q && cd ../backend && pytest -q"
+
+volumes:
+  pgdata:
+  natsdata:

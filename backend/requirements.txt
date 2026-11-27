@@ -1,4 +1,5 @@
 fastapi
 uvicorn
+psycopg[binary]
 httpx
 pytest
