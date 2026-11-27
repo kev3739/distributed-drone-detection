@@ -11,6 +11,31 @@ ENG 4000 Capstone, Team 31, Lassonde School of Engineering, York University.
 
 The system is receive-only. It never transmits, jams or interferes with drones.
 
+## Run it
+
+You need **Docker Desktop**. From the repo root:
+
+```bash
+docker compose up --build                   # database + event bus + fusion + backend
+docker compose --profile test up --build    # same, plus fake sensors (test tool)
+```
+
+- API + interactive docs: http://localhost:8000/docs
+- NATS monitoring: http://localhost:8222
+- Stop: `Ctrl+C`. Wipe all data: `docker compose down -v`
+
+Run all tests (schemas, fusion, backend) against a real database:
+
+```bash
+docker compose --profile tests run --rm tests
+```
+
+## How data flows
+
+```
+sensor nodes ──NATS (ddds.events.*, ddds.heartbeats.*)──> fusion ──> PostgreSQL <── backend API <── dashboard
+```
+
 ## Repository layout
 
 | Folder | What's in it | Owner |
@@ -22,6 +47,8 @@ The system is receive-only. It never transmits, jams or interferes with drones.
 | `backend/` | FastAPI backend, PostgreSQL, REST + SSE API | Kevin |
 | `frontend/` | React operator dashboard | Kevin |
 | `ml/` | Model training, RF classification, anomaly detection | Diego |
+| `db/` | Database tables (`init.sql`) | Kevin |
+| `tools/` | Test tools (fake sensor publisher) | Kevin |
 | `docs/` | Reports, diagrams, test results (`docs/test-results/`) | Everyone |
 
 ## How we work

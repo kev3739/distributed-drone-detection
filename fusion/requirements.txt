@@ -1,1 +1,4 @@
+nats-py
+psycopg[binary]
+jsonschema
 pytest
