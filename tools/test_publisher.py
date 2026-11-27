@@ -66,9 +66,9 @@ async def publish_event(js, event):
     await js.publish(f"ddds.events.{event['type']}.{event['node_id']}", json.dumps(event).encode())
 
 
-async def sighting(js, kind):
+async def sighting(js, kind, dead):
     drone = (SITE[0] + random.uniform(-0.0013, 0.0013), SITE[1] + random.uniform(-0.0018, 0.0018))
-    camera = random.choice(["cv-01", "cv-02"])
+    camera = random.choice([c for c in ("cv-01", "cv-02") if c not in dead] or ["cv-01"])
     if kind in ("fused", "camera"):
         await publish_event(js, camera_event(camera, drone))
     if kind == "fused":
@@ -93,12 +93,13 @@ async def main(args):
         if elapsed >= next_hb:
             for node, (ntype, *_) in SENSORS.items():
                 if node == args.kill and elapsed >= args.kill_after:
-                    continue  # this node has "died": no more heartbeats
+                    continue  # this node has "died": no heartbeats and no detections
                 hb = {"node_id": node, "fps": 2.0 if ntype == "camera" else None}
                 await nc.publish(f"ddds.heartbeats.{node}", json.dumps(hb).encode())
             next_hb += 5
         if elapsed >= next_sighting:
-            await sighting(js, plan[i % len(plan)])
+            dead = {args.kill} if args.kill and elapsed >= args.kill_after else set()
+            await sighting(js, plan[i % len(plan)], dead)
             i += 1
             next_sighting += args.every
         await asyncio.sleep(0.2)

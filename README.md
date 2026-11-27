@@ -20,6 +20,7 @@ docker compose up --build                   # database + event bus + fusion + ba
 docker compose --profile test up --build    # same, plus fake sensors (test tool)
 ```
 
+- **Dashboard**: in a second terminal, `cd frontend && npm install && npm run dev`, then open http://localhost:5173
 - API + interactive docs: http://localhost:8000/docs
 - NATS monitoring: http://localhost:8222
 - Stop: `Ctrl+C`. Wipe all data: `docker compose down -v`
@@ -33,7 +34,7 @@ docker compose --profile tests run --rm tests
 ## How data flows
 
 ```
-sensor nodes ──NATS (ddds.events.*, ddds.heartbeats.*)──> fusion ──> PostgreSQL <── backend API <── dashboard
+sensor nodes ──NATS (ddds.events.*, ddds.heartbeats.*)──> fusion ──> PostgreSQL <── backend API <──(REST + live stream)── dashboard
 ```
 
 ## Repository layout
